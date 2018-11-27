@@ -1253,12 +1253,15 @@ class Simulator(gym.Env):
         delta_dst = dst - self.last_dst
 
         # Compute the reward
-        reward = -delta_dst
+        reward = -delta_dst * 10
+        # Penalize for crossing the line
+        if (self.last_dst < 0.2) and (dst > 0.2):
+            reward -= REWARD_INVALID_POSE
+            print('CROSSED THE LINE')
         if (dst < 0.1) and (self.last_dst < 0.1):
-            reward += self.speed * lp.dot_dir
-        reward *= 10
-        self.total_reward += reward
+            reward += self.speed * lp.dot_dir * 10
 
+        self.total_reward += reward
         # print('reward', reward, 'total_reward', self.total_reward)
 
         # print('speed.robot_speed', self.env.robot_speed)
