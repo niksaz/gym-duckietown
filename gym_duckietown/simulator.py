@@ -90,7 +90,7 @@ DEFAULT_FRAME_SKIP = 1
 DEFAULT_ACCEPT_START_ANGLE_DEG = 60
 
 REWARD_INVALID_POSE = -10
-LINE_CROSSING_REWARD = -5
+REWARD_LINE_CROSSING = -10
 
 MAX_SPAWN_ATTEMPTS = 5000
 
@@ -1256,8 +1256,8 @@ class Simulator(gym.Env):
         # Compute the reward
         reward = -delta_dst * 10
         # Penalize for crossing the line
-        # if (self.last_dst < 0.2) and (dst > 0.2):
-        #     reward += LINE_CROSSING_REWARD
+        if (self.last_dst < 0.2) and (dst > 0.2):
+            reward += REWARD_LINE_CROSSING
         if (dst < 0.1) and (self.last_dst < 0.1):
             reward += self.speed * lp.dot_dir * 10
 
