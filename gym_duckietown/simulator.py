@@ -1256,8 +1256,8 @@ class Simulator(gym.Env):
         # Compute the reward
         reward = -delta_dst * 10
         # Penalize for crossing the line
-        if (self.last_dst < 0.2) and (dst > 0.2):
-            reward += LINE_CROSSING_REWARD
+        # if (self.last_dst < 0.2) and (dst > 0.2):
+        #     reward += LINE_CROSSING_REWARD
         if (dst < 0.1) and (self.last_dst < 0.1):
             reward += self.speed * lp.dot_dir * 10
 
