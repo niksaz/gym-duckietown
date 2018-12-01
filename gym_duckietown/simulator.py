@@ -90,7 +90,6 @@ DEFAULT_FRAME_SKIP = 1
 DEFAULT_ACCEPT_START_ANGLE_DEG = 60
 
 REWARD_INVALID_POSE = -10
-REWARD_LINE_CROSSING = -1
 
 MAX_SPAWN_ATTEMPTS = 5000
 
@@ -1240,6 +1239,7 @@ class Simulator(gym.Env):
     def compute_reward(self):
         pos = self.cur_pos
         delta_pos = pos - self.last_pos
+        crossed_line = False
 
         # We consider the angle of the movement, not the robot's view
         # Do the opposite of get_dir_vec()
@@ -1255,11 +1255,10 @@ class Simulator(gym.Env):
 
         # Compute the reward
         reward = -delta_dst * 10
-        # Penalize for crossing the line
-        if (self.last_dst < 0.2) and (dst > 0.2):
-            reward += REWARD_LINE_CROSSING
         if (dst < 0.1) and (self.last_dst < 0.1):
             reward += self.speed * lp.dot_dir * 10
+        if (self.last_dst < 0.2) and (dst > 0.2):
+            crossed_line = True
 
         self.total_reward += reward
         # print('reward', reward, 'total_reward', self.total_reward)
@@ -1272,7 +1271,7 @@ class Simulator(gym.Env):
 
         self.last_pos = pos
         self.last_dst = dst
-        return reward
+        return crossed_line, reward
 
     def step(self, action):
         # clip the actions to +-1
@@ -1303,7 +1302,10 @@ class Simulator(gym.Env):
             reward = 0
         else:
             done = False
-            reward = self.compute_reward()
+            crossed_line, reward = self.compute_reward()
+            if crossed_line:
+                reward = REWARD_INVALID_POSE
+                done = True
 
         return obs, reward, done, misc
 
