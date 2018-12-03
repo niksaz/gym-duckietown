@@ -479,7 +479,8 @@ class Simulator(gym.Env):
                 tile = self.start_tile
             else:
                 # Select a random drivable tile to start on
-                tile_idx = self.np_random.randint(0, len(self.drivable_tiles))
+                # tile_idx = self.np_random.randint(0, len(self.drivable_tiles))
+                tile_idx = 14  # The tile that starts the hard area
                 tile = self.drivable_tiles[tile_idx]
 
         # Keep trying to find a valid spawn position on this tile
